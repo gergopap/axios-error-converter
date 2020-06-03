@@ -6,7 +6,7 @@ class ConvertedAxiosError extends Error {
       status: axiosError.response.status,
       headers: axiosError.response.headers,
     };
-    const errorMessage = response && response.data && response.data.message || axiosError.message;
+    const errorMessage = getErrorMessageFromResponseData(response) || axiosError.message;
     const statusCode = response && response.status;
     
     super(errorMessage);
@@ -15,6 +15,19 @@ class ConvertedAxiosError extends Error {
     this.config = axiosError.config;
     this.statusCode = statusCode;
     this.response = response;
+  }
+
+}
+
+function getErrorMessageFromResponseData(response) {
+  if (response && response.data) {
+    if (response.data.message) {
+      return response.data.message;
+    } else {
+      return JSON.stringify(response.data);
+    }
+  } else {
+    return;
   }
 }
 
